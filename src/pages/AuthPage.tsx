@@ -125,7 +125,7 @@ function Landing({ onGetStarted, onSignIn, onLocalTest }: { onGetStarted: () => 
             Life is complicated.<br />
             <span className="bg-gradient-to-r from-accent to-accent-secondary bg-clip-text text-transparent">Managing it shouldn't be.</span>
           </h1>
-          <p className="text-body text-text-secondary max-w-xl mx-auto mb-8 animate-fade-in-up text-lg" style={{ animationDelay: '100ms' }}>
+          <p className="text-body text-text-secondary max-w-xl mx-auto mb-8 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
             LifeOS brings tasks, reminders, routines, money, documents, schedules, and everyday responsibilities into one simple, calm place.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 animate-fade-in-up" style={{ animationDelay: '150ms' }}>
