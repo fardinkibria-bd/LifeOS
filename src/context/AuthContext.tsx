@@ -130,10 +130,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     if (error) return { error: error.message };
     if (data.user) {
-      await supabase.from('profiles').upsert({
-        user_id: data.user.id,
-        display_name: displayName,
-      });
+      // Profile creation is handled by the database trigger so this also
+      // works when Supabase requires email confirmation before a session.
+      if (data.session) {
+        const { error: profileError } = await supabase.from('profiles').upsert({
+          user_id: data.user.id,
+          display_name: displayName,
+        });
+        if (profileError) return { error: profileError.message };
+      }
     }
     return { error: null };
   }, []);
