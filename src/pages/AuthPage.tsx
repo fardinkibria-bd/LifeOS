@@ -8,13 +8,13 @@ import { StarPortalButton } from '@/components/effects/StarPortalButton';
 import { CheckSquare, Calendar, Bell, StickyNote, ShoppingCart, CreditCard, Target, Repeat, TrendingDown, FileText, ArrowRight } from 'lucide-react';
 
 export function AuthPage() {
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, enterLocalTestMode } = useAuth();
   const { showToast } = useToast();
   const [mode, setMode] = useState<'landing' | 'signin' | 'signup'>('landing');
 
-  if (mode === 'landing') return <Landing onGetStarted={() => setMode('signup')} onSignIn={() => setMode('signin')} />;
-  if (mode === 'signin') return <SignInForm onBack={() => setMode('landing')} onSwitch={() => setMode('signup')} signIn={signIn} showToast={showToast} />;
-  return <SignUpForm onBack={() => setMode('landing')} onSwitch={() => setMode('signin')} signUp={signUp} showToast={showToast} />;
+  if (mode === 'landing') return <Landing onGetStarted={() => setMode('signup')} onSignIn={() => setMode('signin')} onLocalTest={enterLocalTestMode} />;
+  if (mode === 'signin') return <SignInForm onBack={() => setMode('landing')} onSwitch={() => setMode('signup')} signIn={signIn} onLocalTest={enterLocalTestMode} showToast={showToast} />;
+  return <SignUpForm onBack={() => setMode('landing')} onSwitch={() => setMode('signin')} signUp={signUp} onLocalTest={enterLocalTestMode} showToast={showToast} />;
 }
 
 function FloatingOrbs() {
@@ -71,7 +71,7 @@ function FloatingCards() {
   );
 }
 
-function Landing({ onGetStarted, onSignIn }: { onGetStarted: () => void; onSignIn: () => void }) {
+function Landing({ onGetStarted, onSignIn, onLocalTest }: { onGetStarted: () => void; onSignIn: () => void; onLocalTest: () => void }) {
   const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -101,6 +101,11 @@ function Landing({ onGetStarted, onSignIn }: { onGetStarted: () => void; onSignI
           <button onClick={onSignIn} className="text-body-sm font-medium text-text-secondary hover:text-text-primary transition-colors duration-200">
             Sign in
           </button>
+          {import.meta.env.DEV && import.meta.env.VITE_ENABLE_LOCAL_AUTH_BYPASS === 'true' && (
+            <button onClick={onLocalTest} className="text-body-sm font-medium text-accent hover:text-accent-secondary transition-colors duration-200">
+              Local test
+            </button>
+          )}
           <Button size="sm" onClick={onGetStarted}>Get started</Button>
         </div>
       </nav>
@@ -216,9 +221,10 @@ function FakeRow({ color, text }: { color: string; text: string }) {
   );
 }
 
-function SignInForm({ onBack, onSwitch, signIn, showToast }: {
+function SignInForm({ onBack, onSwitch, signIn, onLocalTest, showToast }: {
   onBack: () => void; onSwitch: () => void;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
+  onLocalTest: () => void;
   showToast: (msg: string, type?: 'success' | 'error' | 'info') => void;
 }) {
   const [email, setEmail] = useState('');
@@ -251,33 +257,48 @@ function SignInForm({ onBack, onSwitch, signIn, showToast }: {
       <p className="text-body-sm text-text-secondary text-center mt-4">
         Don't have an account? <button onClick={onSwitch} className="text-accent font-medium hover:underline">Sign up</button>
       </p>
+      {import.meta.env.DEV && import.meta.env.VITE_ENABLE_LOCAL_AUTH_BYPASS === 'true' && (
+        <button type="button" onClick={onLocalTest} className="w-full mt-3 text-body-sm text-text-secondary hover:text-accent transition-colors">
+          Use local test account
+        </button>
+      )}
     </AuthShell>
   );
 }
 
-function SignUpForm({ onBack, onSwitch, signUp, showToast }: {
+function SignUpForm({ onBack, onSwitch, signUp, onLocalTest, showToast }: {
   onBack: () => void; onSwitch: () => void;
-  signUp: (email: string, password: string, name: string) => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string, name: string) => Promise<{ error: string | null; confirmationRequired: boolean }>;
+  onLocalTest: () => void;
   showToast: (msg: string, type?: 'success' | 'error' | 'info') => void;
 }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [confirmationRequired, setConfirmationRequired] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setConfirmationRequired(false);
     if (password.length < 6) { setError('Password must be at least 6 characters.'); return; }
     setLoading(true);
-    const { error } = await signUp(email, password, name);
+    const result = await signUp(email, password, name);
     setLoading(false);
-    if (error) {
-      setError(error.includes('already') ? 'An account with this email already exists.' : error);
+    if (result.error) {
+      const normalizedError = result.error.toLowerCase();
+      const message = normalizedError.includes('rate limit') || normalizedError.includes('too many')
+        ? 'Supabase has temporarily limited email signups. Wait a few minutes and try again, or disable email confirmation in Supabase Auth settings while testing.'
+        : normalizedError.includes('already')
+          ? 'An account with this email already exists.'
+          : result.error;
+      setError(message);
       showToast('Could not create account.', 'error');
     } else {
-      showToast('Account created! Welcome to LifeOS.');
+      setConfirmationRequired(result.confirmationRequired);
+      showToast(result.confirmationRequired ? 'Check your email to confirm your account.' : 'Account created! Welcome to LifeOS.');
     }
   };
 
@@ -287,12 +308,22 @@ function SignUpForm({ onBack, onSwitch, signUp, showToast }: {
         <Input label="Name" name="name" value={name} onChange={e => setName(e.target.value)} placeholder="Your name" required autoFocus />
         <Input label="Email" type="email" name="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" required />
         <Input label="Password" type="password" name="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="At least 6 characters" required />
-        {error && <p className="text-body-sm text-danger">{error}</p>}
+        {error && <p role="alert" className="text-body-sm text-danger">{error}</p>}
+        {confirmationRequired && (
+          <p role="status" className="text-body-sm text-text-secondary">
+            Your account was created. Check <strong className="text-text-primary">{email}</strong> for the confirmation link before signing in.
+          </p>
+        )}
         <Button type="submit" loading={loading} className="w-full">Create account</Button>
       </form>
       <p className="text-body-sm text-text-secondary text-center mt-4">
         Already have an account? <button onClick={onSwitch} className="text-accent font-medium hover:underline">Sign in</button>
       </p>
+      {import.meta.env.DEV && import.meta.env.VITE_ENABLE_LOCAL_AUTH_BYPASS === 'true' && (
+        <button type="button" onClick={onLocalTest} className="w-full mt-3 text-body-sm text-text-secondary hover:text-accent transition-colors">
+          Use local test account
+        </button>
+      )}
     </AuthShell>
   );
 }
