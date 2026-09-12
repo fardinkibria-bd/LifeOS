@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Search, Bell, Sun, Moon, Monitor, Plus } from 'lucide-react';
+import { Search, Bell, Plus } from 'lucide-react';
 import { useRouter } from '@/context/RouterContext';
 import { useAuth } from '@/context/AuthContext';
-import { useTheme } from '@/context/ThemeContext';
 import { useQuickAdd } from '@/context/QuickAddContext';
 import { navItems } from '@/config/navigation';
-import { cn } from '@/lib/utils';
 import { supabase } from '@/lib/supabase';
 import type { Notification } from '@/types';
 import { LifeOSLogo } from '@/components/brand/LifeOSLogo';
@@ -13,12 +11,10 @@ import { LifeOSLogo } from '@/components/brand/LifeOSLogo';
 export function TopBar({ onOpenSearch }: { onOpenSearch: () => void }) {
   const { route, navigate } = useRouter();
   const { profile, signOut } = useAuth();
-  const { theme, setTheme } = useTheme();
   const { open: openQuickAdd } = useQuickAdd();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showNotif, setShowNotif] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
-  const [showTheme, setShowTheme] = useState(false);
 
   const currentNav = navItems.find(n => route.startsWith(`/${n.id}`));
   const pageTitle = currentNav?.label || 'Dashboard';
@@ -35,19 +31,17 @@ export function TopBar({ onOpenSearch }: { onOpenSearch: () => void }) {
   }, [profile, route]);
 
   useEffect(() => {
-    const handler = () => { setShowNotif(false); setShowProfile(false); setShowTheme(false); };
-    if (showNotif || showProfile || showTheme) {
+    const handler = () => { setShowNotif(false); setShowProfile(false); };
+    if (showNotif || showProfile) {
       document.addEventListener('click', handler);
       return () => document.removeEventListener('click', handler);
     }
-  }, [showNotif, showProfile, showTheme]);
+  }, [showNotif, showProfile]);
 
   const markAllRead = async () => {
     await supabase.from('notifications').update({ read: true }).eq('read', false);
     setNotifications([]);
   };
-
-  const themeIcons = { light: <Sun className="h-4 w-4" />, dark: <Moon className="h-4 w-4" />, system: <Monitor className="h-4 w-4" /> };
 
   return (
     <header className="lifeos-topbar sticky top-3 lg:top-4 z-30 flex h-14 mx-3 mt-3 lg:mx-4 lg:mt-4 items-center gap-3 glass-strong glass-highlight px-4 lg:px-6 shrink-0">
@@ -73,38 +67,10 @@ export function TopBar({ onOpenSearch }: { onOpenSearch: () => void }) {
         <Plus className="h-5 w-5" />
       </button>
 
-      {/* Theme toggle */}
-      <div className="relative">
-        <button
-          onClick={(e) => { e.stopPropagation(); setShowTheme(!showTheme); setShowNotif(false); setShowProfile(false); }}
-          className="flex h-9 w-9 items-center justify-center rounded-lg text-text-secondary hover:bg-surface-hover transition-all duration-200"
-        >
-          {themeIcons[theme]}
-        </button>
-        {showTheme && (
-          <div className="absolute right-0 top-11 w-40 rounded-xl glass-strong glass-highlight shadow-xl py-1 animate-scale-in z-50">
-            {(['light', 'dark', 'system'] as const).map(t => (
-              <button
-                key={t}
-                onClick={(e) => { e.stopPropagation(); setTheme(t); setShowTheme(false); }}
-                className={cn(
-                  'flex w-full items-center gap-3 px-3 py-2 text-body-sm hover:bg-surface-hover transition-all duration-200',
-                  theme === t ? 'text-accent font-medium' : 'text-text-secondary'
-                )}
-              >
-                {themeIcons[t]}
-                <span className="capitalize">{t}</span>
-                {theme === t && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-accent shadow-glow-sm-primary" />}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
       {/* Notifications */}
       <div className="relative">
         <button
-          onClick={(e) => { e.stopPropagation(); setShowNotif(!showNotif); setShowTheme(false); setShowProfile(false); }}
+          onClick={(e) => { e.stopPropagation(); setShowNotif(!showNotif); setShowProfile(false); }}
           className="relative flex h-9 w-9 items-center justify-center rounded-lg text-text-secondary hover:bg-surface-hover transition-all duration-200"
         >
           <Bell className="h-4 w-4" />
@@ -146,7 +112,7 @@ export function TopBar({ onOpenSearch }: { onOpenSearch: () => void }) {
       {/* Profile */}
       <div className="relative">
         <button
-          onClick={(e) => { e.stopPropagation(); setShowProfile(!showProfile); setShowTheme(false); setShowNotif(false); }}
+          onClick={(e) => { e.stopPropagation(); setShowProfile(!showProfile); setShowNotif(false); }}
           className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-accent-secondary text-bg-elevated text-body-sm font-semibold shadow-glow-sm-primary hover:shadow-glow transition-all duration-200"
         >
           {profile?.avatar_url ? <img src={profile.avatar_url} alt="" className="h-full w-full rounded-lg object-cover" /> : <LifeOSLogo className="h-7 w-7" />}

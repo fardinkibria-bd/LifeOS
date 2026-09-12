@@ -32,7 +32,12 @@ export function IntroAnimation({ onComplete }: Props) {
     <div className="lifeos-authored-intro fixed inset-0 z-[9999] flex items-center justify-center" role="status" aria-label="Loading LifeOS">
       <div className="lifeos-intro-mark">
         <div className="lifeos-intro-logo" aria-hidden="true">
-          <span>L</span>
+          <img
+            src="/Logo(croped).png"
+            alt=""
+            className="h-full w-full rounded-[20px] object-cover"
+            draggable={false}
+          />
         </div>
         <div className="lifeos-intro-wordmark" aria-label={fullWordmark}>
           {wordmark}

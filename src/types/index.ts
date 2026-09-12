@@ -14,7 +14,6 @@ export interface Profile {
   date_format: string;
   time_format: string;
   week_start: 'sunday' | 'monday';
-  theme: 'light' | 'dark' | 'system';
   onboarded: boolean;
   created_at: string;
   updated_at: string;

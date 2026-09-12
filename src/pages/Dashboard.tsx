@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from "react";
 import { PredictiveArcCanvas } from "@designcodeio/threeui";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/AuthContext";
-import { useTheme } from "@/context/ThemeContext";
 import { useRouter } from "@/context/RouterContext";
 import { useQuickAdd } from "@/context/QuickAddContext";
 import {
@@ -46,7 +45,6 @@ import {
 
 export function Dashboard() {
   const { profile } = useAuth();
-  const { resolvedTheme } = useTheme();
   const { navigate } = useRouter();
   const { open } = useQuickAdd();
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -174,7 +172,7 @@ export function Dashboard() {
       <div className="relative mb-8 animate-fade-in-up overflow-hidden rounded-2xl border border-border-strong">
         <div aria-hidden className="absolute inset-0 pointer-events-none">
           <PredictiveArcCanvas
-            mode={resolvedTheme === "dark" ? "dark" : "light"}
+            mode="dark"
             speed={0.8}
             brightness={0.9}
             className="opacity-70"

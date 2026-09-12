@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
-import { ThemeProvider } from '@/context/ThemeContext';
 import { ToastProvider } from '@/context/ToastContext';
 import { RouterProvider, useRouter } from '@/context/RouterContext';
 import { QuickAddProvider } from '@/context/QuickAddContext';
@@ -99,20 +98,18 @@ function RouteRenderer() {
 
 function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <ToastProvider>
-          <RouterProvider>
-            <QuickAddProvider>
-              <div className="lifeos-root">
-                <AppBackground />
-                <RouteRenderer />
-              </div>
-            </QuickAddProvider>
-          </RouterProvider>
-        </ToastProvider>
-      </AuthProvider>
-    </ThemeProvider>
+    <AuthProvider>
+      <ToastProvider>
+        <RouterProvider>
+          <QuickAddProvider>
+            <div className="lifeos-root">
+              <AppBackground />
+              <RouteRenderer />
+            </div>
+          </QuickAddProvider>
+        </RouterProvider>
+      </ToastProvider>
+    </AuthProvider>
   );
 }
 

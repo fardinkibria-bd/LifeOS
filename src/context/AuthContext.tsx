@@ -29,7 +29,6 @@ const localProfile: Profile = {
   date_format: 'MM/DD/YYYY',
   time_format: '12h',
   week_start: 'sunday',
-  theme: 'dark',
   onboarded: true,
   created_at: new Date(0).toISOString(),
   updated_at: new Date(0).toISOString(),

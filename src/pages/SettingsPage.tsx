@@ -1,20 +1,18 @@
 import { useRef, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { useTheme } from '@/context/ThemeContext';
 import { useToast } from '@/context/ToastContext';
 import { Button } from '@/components/ui/Button';
 import { Input, Select } from '@/components/ui/Input';
 import { Card } from '@/components/ui/index';
-import { cn, getInitials } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { supabase } from '@/lib/supabase';
-import { User, Palette, Bell, Download, LogOut, Sun, Moon, Monitor, Camera } from 'lucide-react';
+import { User, Bell, Download, LogOut, Camera } from 'lucide-react';
 import { LifeOSLogo } from '@/components/brand/LifeOSLogo';
 
-type Section = 'account' | 'appearance' | 'notifications' | 'data' | 'privacy';
+type Section = 'account' | 'notifications' | 'data' | 'privacy';
 
 export function SettingsPage() {
   const { user, profile, updateProfile, signOut } = useAuth();
-  const { theme, setTheme } = useTheme();
   const { showToast } = useToast();
   const [section, setSection] = useState<Section>('account');
   const [name, setName] = useState(profile?.display_name || '');
@@ -76,7 +74,6 @@ export function SettingsPage() {
 
   const sections: { id: Section; label: string; icon: React.ReactNode }[] = [
     { id: 'account', label: 'Account', icon: <User className="h-4 w-4" /> },
-    { id: 'appearance', label: 'Appearance', icon: <Palette className="h-4 w-4" /> },
     { id: 'notifications', label: 'Notifications', icon: <Bell className="h-4 w-4" /> },
     { id: 'data', label: 'Data', icon: <Download className="h-4 w-4" /> },
     { id: 'privacy', label: 'Privacy', icon: <User className="h-4 w-4" /> },
@@ -139,20 +136,6 @@ export function SettingsPage() {
                 <Button variant="danger" onClick={signOut}><LogOut className="h-4 w-4" /> Sign out</Button>
               </Card>
             </div>
-          )}
-
-          {section === 'appearance' && (
-            <Card className="p-5 animate-fade-in-up">
-              <h2 className="text-h4 text-text-primary font-semibold mb-4">Theme</h2>
-              <div className="grid grid-cols-3 gap-3">
-                {([['light', 'Light', <Sun className="h-5 w-5" />], ['dark', 'Dark', <Moon className="h-5 w-5" />], ['system', 'System', <Monitor className="h-5 w-5" />]] as const).map(([t, label, icon], i) => (
-                  <button key={t} onClick={() => setTheme(t)} className={cn('flex flex-col items-center gap-2 rounded-xl p-4 transition-all duration-200 ease-out-quart animate-stagger-in', theme === t ? 'glass-medium glass-highlight border-accent/30 shadow-glow-sm-primary' : 'glass hover:bg-surface-hover hover:-translate-y-0.5')} style={{ animationDelay: `${i * 30}ms` }}>
-                    <span className={cn(theme === t ? 'text-accent' : 'text-text-secondary')}>{icon}</span>
-                    <span className={cn('text-body-sm font-medium', theme === t ? 'text-accent' : 'text-text-secondary')}>{label}</span>
-                  </button>
-                ))}
-              </div>
-            </Card>
           )}
 
           {section === 'notifications' && (

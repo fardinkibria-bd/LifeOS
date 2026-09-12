@@ -4,7 +4,7 @@ import { useToast } from '@/context/ToastContext';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { LifeOSLogo } from '@/components/Logo';
-import { StarPortalButton } from '@/components/effects/StarPortalButton';
+import { IgnitionButton } from '@/components/effects/IgnitionButton';
 import { CheckSquare, Calendar, Bell, StickyNote, ShoppingCart, CreditCard, Target, Repeat, TrendingDown, FileText, ArrowRight } from 'lucide-react';
 
 export function AuthPage() {
@@ -106,7 +106,9 @@ function Landing({ onGetStarted, onSignIn, onLocalTest }: { onGetStarted: () => 
               Local test
             </button>
           )}
-          <Button size="sm" onClick={onGetStarted}>Get started</Button>
+          <IgnitionButton onClick={onGetStarted} className="h-9 px-4 text-xs">
+            Get started
+          </IgnitionButton>
         </div>
       </nav>
 
@@ -129,9 +131,9 @@ function Landing({ onGetStarted, onSignIn, onLocalTest }: { onGetStarted: () => 
             LifeOS brings tasks, reminders, routines, money, documents, schedules, and everyday responsibilities into one simple, calm place.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 animate-fade-in-up" style={{ animationDelay: '150ms' }}>
-            <StarPortalButton onClick={onGetStarted}>
+            <IgnitionButton onClick={onGetStarted}>
               Get started — it's free
-            </StarPortalButton>
+            </IgnitionButton>
             <button onClick={onSignIn} className="text-body font-medium text-text-secondary hover:text-text-primary transition-colors duration-200">
               I already have an account
             </button>
@@ -201,7 +203,9 @@ function Landing({ onGetStarted, onSignIn, onLocalTest }: { onGetStarted: () => 
         <div className="glass-strong glass-highlight rounded-2xl p-10 shadow-xl">
           <h2 className="text-h2 text-text-primary font-semibold mb-3">Start managing your life today</h2>
           <p className="text-body text-text-secondary mb-6">Free to start. No credit card required.</p>
-          <Button size="lg" onClick={onGetStarted}>Create your account</Button>
+          <IgnitionButton onClick={onGetStarted} className="w-full sm:w-auto">
+            Create your account
+          </IgnitionButton>
         </div>
       </section>
 

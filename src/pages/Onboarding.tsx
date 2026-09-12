@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
-import { useTheme } from '@/context/ThemeContext';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
-import { CheckSquare, Calendar, Wallet, Home, Target, Sparkles, Sun, Moon, Monitor } from 'lucide-react';
+import { CheckSquare, Calendar, Wallet, Home, Target, Sparkles } from 'lucide-react';
 
 const interests = [
   { id: 'tasks', label: 'Tasks', icon: <CheckSquare className="h-5 w-5" /> },
@@ -15,15 +14,11 @@ const interests = [
   { id: 'everything', label: 'Everything', icon: <Sparkles className="h-5 w-5" /> },
 ];
 
-const themeIcons = { light: <Sun className="h-4 w-4" />, dark: <Moon className="h-4 w-4" />, system: <Monitor className="h-4 w-4" /> };
-
 export function Onboarding() {
   const { profile, updateProfile } = useAuth();
   const { showToast } = useToast();
-  const { setTheme } = useTheme();
   const [name, setName] = useState(profile?.display_name || '');
   const [selected, setSelected] = useState<string[]>([]);
-  const [themeChoice, setThemeChoice] = useState<'light' | 'dark' | 'system'>('dark');
   const [loading, setLoading] = useState(false);
 
   const toggle = (id: string) => {
@@ -33,8 +28,7 @@ export function Onboarding() {
 
   const handleFinish = async () => {
     setLoading(true);
-    setTheme(themeChoice);
-    const { error } = await updateProfile({ display_name: name || 'User', onboarded: true, theme: themeChoice });
+    const { error } = await updateProfile({ display_name: name || 'User', onboarded: true });
     setLoading(false);
     if (error) showToast('Could not save preferences. Try again.', 'error');
     else showToast('Welcome to LifeOS!');
@@ -82,27 +76,6 @@ export function Onboarding() {
               >
                 <span className="shrink-0">{item.icon}</span>
                 <span className="text-body-sm font-medium">{item.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="glass-medium glass-highlight rounded-2xl p-6 mb-6 shadow-md animate-fade-in-up" style={{ animationDelay: '150ms' }}>
-          <p className="text-body-sm font-medium text-text-secondary mb-3">Choose your theme</p>
-          <div className="grid grid-cols-3 gap-2.5">
-            {(['light', 'dark', 'system'] as const).map(t => (
-              <button
-                key={t}
-                onClick={() => setThemeChoice(t)}
-                className={cn(
-                  'rounded-xl glass p-3.5 text-center transition-all duration-200 ease-out-quart',
-                  themeChoice === t ? 'border-accent bg-accent/10 shadow-glow-sm-primary' : 'hover:border-border-strong hover:-translate-y-0.5'
-                )}
-              >
-                <div className="flex items-center justify-center mb-2">
-                  <span className={cn(themeChoice === t ? 'text-accent' : 'text-text-muted')}>{themeIcons[t]}</span>
-                </div>
-                <span className={cn('text-caption font-medium capitalize', themeChoice === t ? 'text-accent' : 'text-text-secondary')}>{t}</span>
               </button>
             ))}
           </div>

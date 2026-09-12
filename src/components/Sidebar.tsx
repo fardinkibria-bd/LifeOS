@@ -6,6 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useQuickAdd } from '@/context/QuickAddContext';
 import { getInitials } from '@/lib/utils';
 import { ChevronLeft, ChevronRight, Plus, Search } from 'lucide-react';
+import { LifeOSLogo } from '@/components/brand/LifeOSLogo';
 
 export function Sidebar({ collapsed, onToggleCollapse }: { collapsed: boolean; onToggleCollapse: () => void }) {
   const { route, navigate } = useRouter();
@@ -19,15 +20,36 @@ export function Sidebar({ collapsed, onToggleCollapse }: { collapsed: boolean; o
       'hidden lg:flex flex-col glass-strong glass-highlight border-r border-border/50 transition-all duration-300 ease-out-quart shrink-0 z-20',
       collapsed ? 'w-16' : 'w-60'
     )}>
-      {/* Logo */}
+      {/* Logo with collapse button */}
       <div className="flex h-14 items-center gap-2.5 px-4 border-b border-border/40 shrink-0">
-        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-accent to-accent-secondary text-bg-elevated font-bold text-sm shrink-0 shadow-glow">
-          L
-        </div>
+        {collapsed && (
+          <button
+            onClick={onToggleCollapse}
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-text-muted hover:bg-surface-hover hover:text-text-primary transition-all duration-200 shrink-0"
+            title="Expand sidebar"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        )}
+        <LifeOSLogo
+          className={cn(
+            "h-8 w-8 shrink-0 shadow-glow transition-shadow duration-200",
+            collapsed && "cursor-pointer hover:shadow-glow-lg"
+          )}
+        />
         {!collapsed && (
-          <div className="flex flex-col">
-            <span className="text-h4 text-text-primary font-bold tracking-tight leading-none">LifeOS</span>
-          </div>
+          <>
+            <div className="flex flex-col">
+              <span className="text-h4 text-text-primary font-bold tracking-tight leading-none">LifeOS</span>
+            </div>
+            <button
+              onClick={onToggleCollapse}
+              className="flex h-7 w-7 items-center justify-center rounded-lg text-text-muted hover:bg-surface-hover hover:text-text-primary transition-all duration-200 ml-auto shrink-0"
+              title="Collapse sidebar"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+          </>
         )}
       </div>
 
@@ -94,7 +116,7 @@ export function Sidebar({ collapsed, onToggleCollapse }: { collapsed: boolean; o
         ))}
       </nav>
 
-      {/* Profile + Collapse */}
+      {/* Profile */}
       <div className="border-t border-border/40 p-3 flex items-center gap-2">
         <button
           onClick={() => navigate('/settings')}
@@ -110,23 +132,7 @@ export function Sidebar({ collapsed, onToggleCollapse }: { collapsed: boolean; o
             <span className="text-body-sm text-text-primary truncate">{profile?.display_name || 'User'}</span>
           )}
         </button>
-        {!collapsed && (
-          <button
-            onClick={onToggleCollapse}
-            className="flex h-7 w-7 items-center justify-center rounded-lg text-text-muted hover:bg-surface-hover hover:text-text-primary transition-all duration-200 shrink-0"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </button>
-        )}
       </div>
-      {collapsed && (
-        <button
-          onClick={onToggleCollapse}
-          className="flex h-9 w-full items-center justify-center text-text-muted hover:bg-surface-hover hover:text-text-primary border-t border-border/40 transition-all duration-200"
-        >
-          <ChevronRight className="h-4 w-4" />
-        </button>
-      )}
     </aside>
   );
 }

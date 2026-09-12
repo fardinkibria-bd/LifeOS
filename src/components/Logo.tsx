@@ -1,9 +1,17 @@
 export function LifeOSLogo({ className }: { className?: string }) {
   return (
     <div
-      className={`flex items-center justify-center rounded-xl bg-gradient-to-br from-accent to-accent-secondary text-bg-elevated font-bold shadow-glow-sm-primary ${className || ''}`}
+      className={`overflow-hidden ${className || ''}`.trim()}
+      style={{
+        borderRadius: '22%',
+      }}
     >
-      L
+      <img
+        src="/Logo(croped).png"
+        alt="LifeOS"
+        className="h-full w-full object-cover"
+        draggable={false}
+      />
     </div>
   );
 }
