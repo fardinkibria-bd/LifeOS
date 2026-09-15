@@ -23,7 +23,7 @@ export function MaintenancePage() {
     setLoading(false);
   }, []);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [load]);
 
   const deleteRecord = async (id: string) => {
     setRecords(prev => prev.filter(r => r.id !== id));

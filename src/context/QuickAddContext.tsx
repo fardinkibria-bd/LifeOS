@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- provider and hook are intentionally co-located */
 import { createContext, useContext, useState, ReactNode } from 'react';
 import {
   CheckSquare, Calendar, Bell, StickyNote, Repeat,

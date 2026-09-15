@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- provider and hook are intentionally co-located */
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 
 interface Toast {

@@ -23,7 +23,7 @@ export function InventoryPage() {
     setLoading(false);
   }, []);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [load]);
 
   const deleteItem = async (id: string) => {
     setItems(prev => prev.filter(i => i.id !== id));

@@ -113,9 +113,10 @@ export function AnimatedDock({
   }, [isCoarse, collapsed]);
 
   useEffect(() => {
+    const container = containerRef.current;
     rafRef.current = requestAnimationFrame(animate);
     const ro = new ResizeObserver(updateLayout);
-    if (containerRef.current) ro.observe(containerRef.current);
+    if (container) ro.observe(container);
 
     const handlePointer = (e: PointerEvent) => {
       pointerRef.current = { x: e.clientX, y: e.clientY };
@@ -131,18 +132,18 @@ export function AnimatedDock({
       focusedIdRef.current = null;
     };
 
-    containerRef.current?.addEventListener("pointermove", handlePointer);
-    containerRef.current?.addEventListener("pointerleave", handleLeave);
-    containerRef.current?.addEventListener("focusin", handleFocus);
-    containerRef.current?.addEventListener("focusout", handleBlur);
+    container?.addEventListener("pointermove", handlePointer);
+    container?.addEventListener("pointerleave", handleLeave);
+    container?.addEventListener("focusin", handleFocus);
+    container?.addEventListener("focusout", handleBlur);
 
     return () => {
       cancelAnimationFrame(rafRef.current);
       ro.disconnect();
-      containerRef.current?.removeEventListener("pointermove", handlePointer);
-      containerRef.current?.removeEventListener("pointerleave", handleLeave);
-      containerRef.current?.removeEventListener("focusin", handleFocus);
-      containerRef.current?.removeEventListener("focusout", handleBlur);
+      container?.removeEventListener("pointermove", handlePointer);
+      container?.removeEventListener("pointerleave", handleLeave);
+      container?.removeEventListener("focusin", handleFocus);
+      container?.removeEventListener("focusout", handleBlur);
     };
   }, [animate, updateLayout]);
 
