@@ -166,6 +166,11 @@ export function Dashboard() {
     bills.length === 0 &&
     routines.length === 0;
 
+  const rawFirstName = profile?.display_name?.trim().split(/\s+/)[0];
+  const isPlaceholderName =
+    !rawFirstName || /^local|test|user|admin$/i.test(rawFirstName);
+  const userGreetingName = isPlaceholderName ? null : rawFirstName;
+
   return (
     <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8">
       {/* Greeting hero with ambient predictive arc backdrop */}
@@ -180,7 +185,7 @@ export function Dashboard() {
         </div>
         <div className="relative z-10 p-5 sm:p-7">
           <h1 className="text-h1 text-text-primary font-bold mb-1">
-            {getGreeting()}, {profile?.display_name?.split(" ")[0] || "there"}
+            {userGreetingName ? `${getGreeting()}, ${userGreetingName}` : getGreeting()}
           </h1>
           <p className="text-body text-text-secondary">
             {isEmpty
@@ -431,20 +436,20 @@ export function Dashboard() {
         </p>
         <div className="flex flex-wrap gap-2">
           {[
-            { label: "Task", route: "/tasks?new=true" },
-            { label: "Event", route: "/calendar?new=true" },
-            { label: "Note", route: "/notes?new=true" },
-            { label: "Bill", route: "/bills?new=true" },
-            { label: "Expense", route: "/expenses?new=true" },
-            { label: "Goal", route: "/goals?new=true" },
+            { label: "Add Task", route: "/tasks?new=true" },
+            { label: "Add Event", route: "/calendar?new=true" },
+            { label: "Add Note", route: "/notes?new=true" },
+            { label: "Add Bill", route: "/bills?new=true" },
+            { label: "Add Expense", route: "/expenses?new=true" },
+            { label: "Add Goal", route: "/goals?new=true" },
           ].map((action) => (
             <button
               key={action.label}
               onClick={() => navigate(action.route)}
               className="flex items-center gap-1.5 rounded-lg glass px-3.5 py-2 text-body-sm text-text-secondary hover:text-accent hover:border-accent transition-all duration-200"
             >
-              <Plus className="h-3.5 w-3.5" />
-              {action.label}
+              <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+              <span>{action.label}</span>
             </button>
           ))}
         </div>

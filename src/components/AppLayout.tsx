@@ -51,7 +51,11 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   return (
     <div className="lifeos-app-shell flex h-screen overflow-hidden">
-      <AnimatedDock collapsed={collapsed} onToggleCollapse={() => setCollapsed(!collapsed)} />
+      <AnimatedDock
+        collapsed={collapsed}
+        onToggleCollapse={() => setCollapsed(!collapsed)}
+        onOpenSearch={onOpenSearch}
+      />
       <div className="flex flex-1 flex-col min-w-0">
         <TopBar onOpenSearch={onOpenSearch} />
         <main className={cn('flex-1 overflow-y-auto scrollbar-thin', 'pb-20 lg:pb-0')}>

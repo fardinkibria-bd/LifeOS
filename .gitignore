@@ -1,3 +1,4 @@
+.gitignore
 logs
 *.log
 npm-debug.log*
@@ -21,3 +22,4 @@ dist-ssr
 .env
 .claude
 .agents
+.kilo

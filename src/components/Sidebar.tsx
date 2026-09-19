@@ -57,6 +57,8 @@ export function Sidebar({ collapsed, onToggleCollapse }: { collapsed: boolean; o
       <div className="flex flex-col gap-2 p-3 border-b border-border/40">
         <button
           onClick={open}
+          aria-label="Create new item"
+          title={collapsed ? "Create new" : undefined}
           className={cn(
             'flex items-center justify-center gap-2 rounded-xl bg-accent text-bg-elevated font-medium text-body-sm transition-all duration-200 ease-out-quart shadow-glow',
             'hover:shadow-glow-lg hover:-translate-y-0.5 active:translate-y-0',
@@ -64,19 +66,22 @@ export function Sidebar({ collapsed, onToggleCollapse }: { collapsed: boolean; o
             collapsed ? 'h-9 w-9' : 'h-9 px-3'
           )}
         >
-          <Plus className="h-4 w-4 shrink-0" />
-          {!collapsed && <span>Add</span>}
+          <Plus className="h-4 w-4 shrink-0" aria-hidden="true" />
+          {!collapsed && <span>Create new</span>}
         </button>
         <button
           onClick={() => navigate('/search')}
+          aria-label="Search or run command"
+          aria-keyshortcuts="Meta+K Control+K"
+          title={collapsed ? "Search (⌘K)" : undefined}
           className={cn(
             'flex items-center rounded-lg glass text-text-muted hover:text-text-secondary transition-all duration-200',
             collapsed ? 'h-9 w-9 justify-center' : 'h-9 px-3 gap-2 justify-start'
           )}
         >
-          <Search className="h-4 w-4 shrink-0" />
-          {!collapsed && <span className="text-body-sm">Search</span>}
-          {!collapsed && <kbd className="ml-auto text-caption text-text-muted">⌘K</kbd>}
+          <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
+          {!collapsed && <span className="text-body-sm">Search...</span>}
+          {!collapsed && <kbd className="ml-auto text-caption text-text-muted select-none" aria-hidden="true">⌘K</kbd>}
         </button>
       </div>
 

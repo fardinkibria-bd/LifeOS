@@ -34,9 +34,11 @@ function clamp(v: number, min: number, max: number): number {
 export function AnimatedDock({
   collapsed,
   onToggleCollapse,
+  onOpenSearch,
 }: {
   collapsed: boolean;
   onToggleCollapse: () => void;
+  onOpenSearch?: () => void;
 }) {
   const { route, navigate } = useRouter();
   const { profile } = useAuth();
@@ -185,25 +187,32 @@ export function AnimatedDock({
       <div className="lifeos-sidebar-actions flex flex-col gap-2 p-3">
         <button
           onClick={open}
+          aria-label="Create new item"
+          title={collapsed ? "Create new" : undefined}
           className={cn(
             "lm-btn lm-primary lifeos-sidebar-add flex items-center justify-center gap-2",
             collapsed ? "h-10 w-10" : "h-10 w-full",
           )}
         >
-          <Plus className="h-4 w-4 shrink-0" />
-          {!collapsed && <span>Add</span>}
+          <Plus className="h-4 w-4 shrink-0" aria-hidden="true" />
+          {!collapsed && <span>Create new</span>}
         </button>
         <button
-          onClick={() => navigate("/search")}
+          onClick={onOpenSearch || (() => navigate("/search"))}
+          aria-label="Search or run command"
+          aria-keyshortcuts="Meta+K Control+K"
+          title={collapsed ? "Search (⌘K)" : undefined}
           className={cn(
             "lifeos-sidebar-search flex items-center",
             collapsed ? "h-10 w-10 justify-center" : "h-10 w-full gap-2",
           )}
         >
-          <Search className="h-4 w-4 shrink-0" />
-          {!collapsed && <span className="text-body-sm">Search</span>}
+          <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
+          {!collapsed && <span className="text-body-sm">Search...</span>}
           {!collapsed && (
-            <kbd className="ml-auto text-caption text-text-muted">Cmd K</kbd>
+            <kbd className="ml-auto text-caption text-text-muted select-none" aria-hidden="true">
+              ⌘K
+            </kbd>
           )}
         </button>
       </div>
